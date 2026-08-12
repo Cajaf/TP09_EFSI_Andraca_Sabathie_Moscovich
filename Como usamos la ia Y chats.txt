@@ -1,0 +1,595 @@
+Nosotros utilizamos la IA mas que nada para mejorar el CSS anterior que no se parecía mucho y la idea era que quede idéntico. También para resolver ciertos errores, mas específicamente en el error de que no nos dejaba scrollear y cuando le pedimos soluciones e intentamos implementarlas el error no se resolvia, entonces tuvimos que crear otro proyecto. 
+No sabíamos para que servían o como se usaban algunas cosas como por ejempl el flex1 y el scrollview
+
+chats con IA //Nota Casi todos son de como hacer que scrollee
+Copilot 
+https://copilot.microsoft.com/conversations/join/B3WuZHLnZQNWpQWKFnDdQ
+https://copilot.microsoft.com/conversations/join/B3WuZHLnZQNWpQWKFnDdQ
+Claude
+https://github.com/Cajaf/TP09_EFSI_Andraca_Sabathie/tree/main 
+
+quiero que me expliques por que no me deja scrollear y por que no me anda el navigate de la sidebar de mi aplicacion react native
+
+Fallido
+Fallido
+
+No pude acceder directamente al repo (GitHub bloquea el fetch automático). Para poder ayudarte necesito ver el código concreto. ¿Podrías pegar acá el código relevante? En particular me sirve:
+
+El componente del Sidebar (o Drawer/Navigator) y cómo defines la navegación (onPress, navigation.navigate('...'), nombres de rutas).
+Cómo está armado el Navigator (Stack, Drawer, Tab) — el archivo donde registras las pantallas y sus name.
+El componente/pantalla donde no scrollea — si es un View con contenido largo, un ScrollView, o un FlatList.
+
+Con eso puedo decirte exactamente qué está mal. Mientras tanto, te dejo las causas más comunes de cada problema para que revises vos mismo:
+
+No scrollea:
+
+Estás usando View en vez de ScrollView para contenido que excede la pantalla.
+El ScrollView tiene flex: 1 en su contenido interno pero no en el contentContainerStyle, o al revés.
+El ScrollView está dentro de otro ScrollView o dentro de un View sin altura definida (flex: 1 faltante en el padre).
+Si es una lista, estás usando .map() dentro de un View en lugar de un FlatList/ScrollView.
+
+Navigate del sidebar no anda:
+
+El nombre de ruta que pasás a navigation.navigate('Nombre') no coincide exactamente (mayúsculas/minúsculas) con el name definido en el Screen del Navigator.
+Estás llamando navigation.navigate desde un componente que no tiene acceso al objeto navigation (no es parte del stack, no le pasaste la prop, no usaste useNavigation()).
+El sidebar está definido fuera del NavigationContainer, entonces no tiene contexto de navegación.
+Es un Drawer y estás intentando usar navigate de un Stack, en vez de navigation.dispatch(DrawerActions.openDrawer()) o similar.
+
+Pegame el código y lo reviso puntualmente.
+
+import React, { useEffect, useState } from 'react';
+import { View, StyleSheet, FlatList } from 'react-native';
+import axios from 'axios';
+import SideBar from '../Componentes/SideBar';
+import Publicacion from '../Componentes/Publicacion';
+import Perfiles from '../Componentes/Perfiles';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { ScrollView } from 'react-native';
+
+export default function Home() {
+  const [cats, setCats] = useState([]);
+  const [publicaciones, setPublicaciones] = useState([]);
+
+  const perfiles = [
+    { nombre: "Felipe", foto: "" },
+    { nombre: "Ana", foto: "" },
+    { nombre: "Luis", foto: "" },
+    { nombre: "María", foto: "" },
+    { nombre: "Carlos", foto: "" },
+    { nombre: "Sofía", foto: "" },
+    { nombre: "Pedro", foto: "" },
+    { nombre: "Lucía", foto: "" },
+    { nombre: "Jorge", foto: "" },
+    { nombre: "Valentina", foto: "" },
+  ];
+
+  const comentarios = [
+    { nombre: "Felipe", comentario: "¡Qué buena foto!" },
+    { nombre: "Ana", comentario: "Me encanta este lugar." },
+    { nombre: "Luis", comentario: "Gran recuerdo." },
+    { nombre: "María", comentario: "Muy inspirador." },
+    { nombre: "Carlos", comentario: "Hermoso día." },
+    { nombre: "Sofía", comentario: "Qué alegría verte." },
+    { nombre: "Pedro", comentario: "Excelente publicación." },
+    { nombre: "Lucía", comentario: "Me trae nostalgia." },
+    { nombre: "Jorge", comentario: "Muy buena toma." },
+    { nombre: "Valentina", comentario: "¡Felicitaciones!" },
+  ];
+
+  useEffect(() => {
+    const fetchCats = async () => {
+      try {
+        const response = await axios.get("https://api.thecatapi.com/v1/images/search", {
+          headers: {
+            "x-api-key": "live_ZtQBVqgO3tQ6htJwAQ8VqMxkzM0D5tVRF0be6lkTr7S5vGdzdc3YEQZtPdZpbgMB"
+          },
+          params: { limit: 10 }
+        });
+        setCats(response.data);
+      } catch (error) {
+        console.error("Error al traer gatos:", error);
+      }
+    };
+    fetchCats();
+  }, []);
+
+  useEffect(() => {
+    if (cats.length >= 10) {
+      setPublicaciones([
+        { perfil: perfiles[0], foto: cats[0].url, likes: 12, comentarios: [comentarios[2], comentarios[4]] },
+        { perfil: perfiles[1], foto: cats[1].url, likes: 8, comentarios: [comentarios[1]] },
+        { perfil: perfiles[2], foto: cats[2].url, likes: 15, comentarios: [comentarios[5], comentarios[0]] },
+        { perfil: perfiles[3], foto: cats[3].url, likes: 20, comentarios: [comentarios[6]] },
+      ]);
+    }
+  }, [cats]);
+
+  return (
+  <SafeAreaView style={styles.appContainer}>
+    <View style={styles.sidebar}>
+      <SideBar usuarioSesion={perfiles[0]} />
+    </View>
+
+    <View style={styles.mainContent}>
+      <ScrollView
+        style={styles.feedColumn}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={true}
+      >
+        <Perfiles perfiles={perfiles.slice(1, 7)} />
+        {publicaciones.map((item, index) => (
+          <View key={index} style={styles.postWrapper}>
+            <Publicacion
+              perfil={item.perfil}
+              foto={item.foto}
+              likes={item.likes}
+              comentarios={item.comentarios}
+            />
+          </View>
+        ))}
+      </ScrollView>
+    </View>
+  </SafeAreaView>
+);
+}
+
+const styles = StyleSheet.create({
+  appContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    backgroundColor: '#fafafa',
+  },
+  sidebar: {
+    width: 250,
+    borderRightWidth: 1,
+    borderRightColor: '#dbdbdb',
+  },
+  mainContent: {
+    flex: 1,              // ocupa todo el alto disponible
+    padding: 20,
+  },
+  feedColumn: {
+    flex: 1,              // asegura que el ScrollView se expanda
+    width: '100%',
+    maxWidth: 470,
+  },
+  scrollContent: {
+    flexGrow: 1,          // permite que el contenido crezca y active el scroll
+    paddingBottom: 20,
+  },
+  postWrapper: {
+    marginTop: 16,
+  },
+});
+
+
+import React from "react";
+import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
+import FotoPerfil from "./FotoPerfil"
+
+// Importa tus íconos desde assets
+import instagramLogo from "../assets/Instagram.png";
+import homeIcon from "../assets/home.png";
+import searchIcon from "../assets/search.png";
+import exploreIcon from "../assets/explorer.png";
+import reelsIcon from "../assets/reels.png";
+import messagesIcon from "../assets/messages.png";
+import likeIcon from "../assets/like.png";
+import createIcon from "../assets/create.png";
+import moreIcon from "../assets/More.png";
+
+const SideBar = ({ usuarioSesion, navigation }) => {
+  return (
+    <View style={styles.sidebar}>
+      <Image source={instagramLogo} style={styles.sidebarLogo} />
+
+      <TouchableOpacity style={styles.sidebarItem}>
+        <Image source={homeIcon} style={styles.icon} />
+        <Text style={styles.text}>Home</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={styles.sidebarItem}>
+        <Image source={searchIcon} style={styles.icon} />
+        <Text style={styles.text}>Search</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={styles.sidebarItem}>
+        <Image source={exploreIcon} style={styles.icon} />
+        <Text style={styles.text}>Explore</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={styles.sidebarItem}>
+        <Image source={reelsIcon} style={styles.icon} />
+        <Text style={styles.text}>Reels</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={styles.sidebarItem}>
+        <Image source={messagesIcon} style={styles.icon} />
+        <Text style={styles.text}>Messages</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={styles.sidebarItem}>
+        <Image source={likeIcon} style={styles.icon} />
+        <Text style={styles.text}>Notifications</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={styles.sidebarItem}>
+        <Image source={createIcon} style={styles.icon} />
+        <Text style={styles.text}>Create</Text>
+      </TouchableOpacity>
+
+      {/* Perfil con navegación */}
+      <TouchableOpacity
+        style={styles.sidebarProfile}
+        onPress={() => navigation.navigate("Perfil")}
+      >
+        <View style={{ marginRight: 16 }}>
+          <FotoPerfil foto={usuarioSesion.foto} nombre={usuarioSesion.nombre} size={24} borderWidth={0} />
+        </View>
+        <Text style={styles.text}>Profile</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={styles.sidebarItem}>
+        <Image source={moreIcon} style={styles.icon} />
+        <Text style={styles.text}>More</Text>
+      </TouchableOpacity>
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  sidebar: {
+    flexDirection: "column",
+    alignItems: "flex-start",
+    width: 220,
+    paddingHorizontal: 12,
+    paddingVertical: 20,
+    height: "100%",
+    backgroundColor: "#fff",
+    borderRightWidth: 1,
+    borderRightColor: "#dbdbdb",
+  },
+  sidebarLogo: {
+    width: 103,
+    height: 29,
+    resizeMode: "contain",
+    marginLeft: 12,
+    marginBottom: 25,
+  },
+  sidebarItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    width: "100%",
+    marginVertical: 2,
+    paddingVertical: 12,
+    paddingHorizontal: 12,
+    borderRadius: 8,
+  },
+  icon: {
+    width: 24,
+    height: 24,
+    marginRight: 16,
+    resizeMode: "contain",
+  },
+  text: {
+    fontSize: 16,
+    fontWeight: "400",
+    color: "#000",
+  },
+  sidebarProfile: {
+    flexDirection: "row",
+    alignItems: "center",
+    width: "100%",
+    marginVertical: 2,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    borderRadius: 8,
+  },
+  sidebarProfilePic: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    marginRight: 16,
+  },
+});
+
+export default SideBar;
+
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import { StyleSheet, Text, View } from 'react-native';
+import Home from './screens/Home';
+import Perfil from './screens/Perfil';
+
+const Stack = createStackNavigator();
+
+export default function App() {
+  return (
+    <NavigationContainer>
+      <Stack.Navigator>
+        <Stack.Screen name="Home" component={Home}></Stack.Screen>
+        <Stack.Screen name="Perfil" component={Perfil}></Stack.Screen>
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});
+
+si nesesitas algo mas pedilo
+
+Mensaje contraído
+Pensó durante 6s
+Pensó durante 6s
+
+Encontré dos bugs bien concretos:
+
+1. El navigate no anda porque SideBar nunca recibe navigation
+
+En Home.js lo estás llamando así:
+
+jsx
+<SideBar usuarioSesion={perfiles[0]} />
+
+Nunca le pasás la prop navigation. Adentro de SideBar hacés navigation.navigate("Perfil"), así que navigation es undefined y al tocar "Profile" te tira un error (revisá la consola, seguro ves algo como "Cannot read property 'navigate' of undefined").
+
+Solución: Home es una Stack.Screen, así que React Navigation le pasa automáticamente la prop navigation. Solo tenés que recibirla y reenviarla:
+
+jsx
+export default function Home({ navigation }) {
+  // ...resto del código
+
+  return (
+    <SafeAreaView style={styles.appContainer}>
+      <View style={styles.sidebar}>
+        <SideBar usuarioSesion={perfiles[0]} navigation={navigation} />
+      </View>
+      {/* ... */}
+    </SafeAreaView>
+  );
+}
+
+Alternativa más prolija (recomendada): en vez de pasar navigation como prop manualmente por todos lados, usá el hook useNavigation() directo dentro de SideBar:
+
+jsx
+import { useNavigation } from '@react-navigation/native';
+
+const SideBar = ({ usuarioSesion }) => {
+  const navigation = useNavigation();
+  // ...
+  onPress={() => navigation.navigate("Perfil")}
+
+Así no dependés de que cada pantalla se acuerde de pasarla.
+
+2. El scroll no anda (esto es típico de React Native Web)
+
+Tu ScrollView está bien configurado (flex:1 + contentContainerStyle con flexGrow:1), el problema casi seguro es que estás corriendo esto en web y el árbol de html/body/#root no tiene una altura definida. En React Native puro, flex:1 en la raíz siempre llena la pantalla porque el nativo maneja el layout con altura real del dispositivo. En web, si el body/html no tienen height: 100%, el flex:1 de tus View no tiene contra qué medirse, todo el árbol crece según el contenido, y el ScrollView nunca detecta que hay overflow → no aparece scroll.
+
+Solución: agregá esto en tu index.html (o en el CSS global si usás Expo Web con web/index.html):
+
+css
+html, body, #root {
+  height: 100%;
+  margin: 0;
+}
+
+Si usás Expo, podés ponerlo en un archivo web/index.html propio, o si no lo tenés, corré:
+
+npx expo customize:web
+
+para generar ese archivo y editarlo.
+
+Cómo confirmar que es esto: abrí las devtools del navegador, inspeccioná el <div id="root"> y fijate si su altura es mayor a la del viewport (o sea, se está estirando con el contenido en vez de quedar fija). Si es así, es 100% este problema.
+
+Si estás probando en un emulador/dispositivo real (no web) y el scroll tampoco anda ahí, contame y reviso otra cosa — pero por el layout que armaste (flexDirection: row con sidebar fijo tipo web) intuyo que estás corriendo esto en Expo Web.
+
+Pensó durante 9s
+Pensó durante 9s
+
+Para acercarlo más a las imágenes de referencia necesito también el código de PerfilInfo.js y Comentario.js (ahí vive el header con foto, nombre, stats, y el diseño de cada comentario). Sin verlos no puedo ajustar todo el detalle, pero te dejo ya mejorado todo lo que depende de Perfil.js: el grid de posts y el modal, que es lo más notorio en tus capturas.
+
+Cambios que hice:
+
+Grid: le agregué separación entre imágenes (como Instagram, que tiene un pequeño gap), tabs de "POSTS / REELS / SAVED / TAGGED" (en tu imagen 1 se ven pero en tu código no estaban, así que asumí que están en PerfilInfo — si no, avisame).
+Modal: ajusté proporciones, tipografía, espaciado de comentarios, iconos alineados como en la imagen 2 (like/comment/share a la izquierda, favorito a la derecha), y el bloque de "Add a comment" pegado abajo con borde superior.
+javascript
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: "row",
+    flex: 1,
+    backgroundColor: "#fafafa",
+  },
+  mainContent: {
+    flex: 1,
+    flexDirection: "column",
+    backgroundColor: "#fff",
+  },
+  gridDivider: {
+    maxWidth: 935,
+    width: "100%",
+    marginHorizontal: "auto",
+    borderTopWidth: 1,
+    borderTopColor: "#dbdbdb",
+    marginTop: 24,
+    marginBottom: 0,
+  },
+
+  /* Grid de posts */
+  catGrid: {
+    maxWidth: 935,
+    width: "100%",
+    marginHorizontal: "auto",
+    paddingTop: 2,
+    paddingBottom: 40,
+  },
+  gridRow: {
+    flexDirection: "row",
+    width: "100%",
+  },
+  catImageWrapper: {
+    width: "33.33%",
+    aspectRatio: 1,
+    padding: 1.5, // genera el "gap" entre imágenes como IG
+  },
+  catImageWrapperEmpty: {
+    width: "33.33%",
+    aspectRatio: 1,
+    padding: 1.5,
+  },
+  catImage: {
+    width: "100%",
+    height: "100%",
+    resizeMode: "cover",
+  },
+
+  /* ===== Modal - vista agrandada ===== */
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.9)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalCloseArea: {
+    ...StyleSheet.absoluteFillObject,
+  },
+  modalContent: {
+    backgroundColor: "#fff",
+    borderRadius: 4,
+    width: "80%",
+    maxWidth: 935,
+    height: "80%",
+    maxHeight: 600,
+    flexDirection: "row",
+    overflow: "hidden",
+  },
+  modalCloseBtn: {
+    position: "absolute",
+    top: -40,
+    right: -4,
+    zIndex: 10,
+    padding: 6,
+  },
+  modalCloseText: {
+    color: "#fff",
+    fontSize: 24,
+    fontWeight: "300",
+  },
+  modalImage: {
+    width: "65%",
+    height: "100%",
+    resizeMode: "cover",
+    backgroundColor: "#000",
+  },
+  modalInfo: {
+    width: "35%",
+    borderLeftWidth: 1,
+    borderLeftColor: "#dbdbdb",
+    flexDirection: "column",
+  },
+
+  /* Header del modal */
+  modalHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    borderBottomWidth: 1,
+    borderBottomColor: "#efefef",
+  },
+  modalNombre: {
+    fontSize: 14,
+    fontWeight: "600",
+    marginLeft: 12,
+    color: "#000",
+  },
+  modalNombreExtra: {
+    fontSize: 14,
+    color: "#000",
+  },
+  modalPuntitos: {
+    marginLeft: "auto",
+    width: 16,
+    height: 16,
+    resizeMode: "contain",
+  },
+
+  /* Comentarios */
+  modalCommentsList: {
+    flex: 1,
+    paddingHorizontal: 16,
+    paddingTop: 12,
+  },
+
+  /* Fila de iconos (like, comentar, compartir | guardar) */
+  modalBotones: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 14,
+    paddingTop: 8,
+    paddingBottom: 4,
+    borderTopWidth: 1,
+    borderTopColor: "#efefef",
+  },
+  modalIcono: {
+    width: 24,
+    height: 24,
+    marginRight: 16,
+    resizeMode: "contain",
+  },
+  modalFavorito: {
+    marginLeft: "auto",
+    width: 24,
+    height: 24,
+    resizeMode: "contain",
+  },
+
+  modalLikes: {
+    paddingHorizontal: 16,
+    paddingTop: 6,
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#000",
+  },
+  modalFecha: {
+    paddingHorizontal: 16,
+    paddingTop: 4,
+    paddingBottom: 12,
+    fontSize: 10,
+    color: "#8e8e8e",
+    letterSpacing: 0.3,
+    textTransform: "uppercase",
+  },
+
+  /* Input de comentario abajo */
+  modalAddComment: {
+    flexDirection: "row",
+    alignItems: "center",
+    borderTopWidth: 1,
+    borderTopColor: "#efefef",
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+  },
+  modalAddCommentPlaceholder: {
+    flex: 1,
+    fontSize: 14,
+    color: "#8e8e8e",
+  },
+  modalPost: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#3897f0",
+  },
+});
+
+Notas importantes sobre lo que falta:
+
+En tu imagen 1 se ve el header completo (foto redonda, "upvox_", botones "Edit profile"/"Ad tools", stats, bio) y los tabs "POSTS / REELS / SAVED / TAGGED" — nada de eso está en Perfil.js, así que vive en PerfilInfo.js. Pasame ese código y te lo dejo pixel-perfect.
+En la imagen 2, cada comentario tiene avatar circular + nombre en negrita + texto — eso está en Comentario.js. Mandámelo también si querés que combine bien con el modalCommentsList que ya ajusté.
+Ojo con algo funcional: en tu Perfil.js, dentro del .map() de comentarios estás pasando foto={c.foto} pero tu array comentarios no tiene esa propiedad (solo nombre y comentario), así que c.foto va a ser undefined. Si Comentario.js no maneja bien una foto vacía, puede romper el layout.

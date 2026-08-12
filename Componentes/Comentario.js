@@ -30,6 +30,7 @@ const Comentario = ({ nombre, comentario, compact, foto }) => {
 };
 
 const styles = StyleSheet.create({
+  // usado en el feed (Home), texto tipo "usuario: comentario" en una línea
   compactText: {
     fontSize: 14,
     lineHeight: 18,
@@ -37,19 +38,21 @@ const styles = StyleSheet.create({
   compactComentario: {
     color: "#000",
   },
+
+  // usado en el modal, con avatar + like a la derecha
   comentarioContainer: {
     flexDirection: "row",
     alignItems: "flex-start",
-    marginVertical: 8,
     gap: 10,
+    marginVertical: 8,
   },
   comentarioBody: {
     flex: 1,
   },
   comentarioTexto: {
     fontSize: 14,
-    color: "#000",
     lineHeight: 18,
+    color: "#000",
   },
   comentarioNombre: {
     fontWeight: "600",
@@ -58,8 +61,8 @@ const styles = StyleSheet.create({
   comentarioLike: {
     width: 12,
     height: 12,
-    resizeMode: "contain",
     marginTop: 4,
+    resizeMode: "contain",
     tintColor: "#8e8e8e",
   },
 });

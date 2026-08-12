@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#f5f5f5',
   },
-  mainContent: {
+  mainContent: {    
     flex: 1,
   },
   feedColumn: {
