@@ -211,47 +211,41 @@ const Perfil = () => {
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: "row",
     flex: 1,
     backgroundColor: "#fafafa",
   },
-  sidebar: {
-    width: 250,
-    borderRightWidth: 1,
-    borderRightColor: "#dbdbdb",
-  },
   mainContent: {
     flex: 1,
-    flexDirection: "column",
     backgroundColor: "#fff",
   },
+
+  // línea divisoria arriba del grid
   gridDivider: {
     maxWidth: 935,
     width: "100%",
     marginHorizontal: "auto",
     borderTopWidth: 1,
     borderTopColor: "#dbdbdb",
-    marginBottom: 2,
   },
+
+  // grid de fotos (3 columnas)
   catGrid: {
     maxWidth: 935,
     width: "100%",
     marginHorizontal: "auto",
-    paddingBottom: 20,
+    paddingBottom: 40,
   },
   gridRow: {
     flexDirection: "row",
-    width: "100%",
   },
   catImageWrapper: {
     width: "33.33%",
     aspectRatio: 1,
-    padding: 1,
+    padding: 2, // esto crea el espacio entre fotos
   },
   catImageWrapperEmpty: {
     width: "33.33%",
     aspectRatio: 1,
-    padding: 1,
   },
   catImage: {
     width: "100%",
@@ -259,47 +253,50 @@ const styles = StyleSheet.create({
     resizeMode: "cover",
   },
 
-  /* Modal - vista agrandada */
+  // fondo oscuro del modal
   modalOverlay: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.85)",
+    backgroundColor: "rgba(0,0,0,0.9)",
     justifyContent: "center",
     alignItems: "center",
   },
   modalCloseArea: {
     ...StyleSheet.absoluteFillObject,
   },
+
+  // caja blanca del modal: foto a la izquierda, info a la derecha
   modalContent: {
+    flexDirection: "row",
     backgroundColor: "#fff",
     borderRadius: 4,
-    width: "90%",
-    maxWidth: 900,
-    maxHeight: "85%",
-    flexDirection: "row",
+    width: "80%",
+    maxWidth: 935,
+    height: "80%",
+    maxHeight: 600,
     overflow: "hidden",
   },
   modalCloseBtn: {
     position: "absolute",
     top: -36,
     right: 0,
-    zIndex: 10,
   },
   modalCloseText: {
     color: "#fff",
-    fontSize: 22,
+    fontSize: 24,
   },
   modalImage: {
-    width: "60%",
+    width: "65%",
     height: "100%",
     resizeMode: "cover",
     backgroundColor: "#000",
   },
   modalInfo: {
-    width: "40%",
+    width: "35%",
     borderLeftWidth: 1,
     borderLeftColor: "#dbdbdb",
-    flexDirection: "column",
   },
+
+  // header dentro del modal (foto + nombre)
   modalHeader: {
     flexDirection: "row",
     alignItems: "center",
@@ -311,7 +308,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "600",
     marginLeft: 10,
-    color: "#000",
   },
   modalNombreExtra: {
     fontSize: 14,
@@ -319,27 +315,30 @@ const styles = StyleSheet.create({
   },
   modalPuntitos: {
     marginLeft: "auto",
-    width: 18,
-    height: 18,
+    width: 16,
+    height: 16,
     resizeMode: "contain",
   },
+
+  // lista de comentarios (scrollable)
   modalCommentsList: {
     flex: 1,
     paddingHorizontal: 14,
     paddingTop: 10,
   },
+
+  // fila de iconos: like, comentar, compartir (izq) / guardar (der)
   modalBotones: {
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: 12,
-    paddingTop: 10,
+    padding: 12,
     borderTopWidth: 1,
     borderTopColor: "#efefef",
   },
   modalIcono: {
     width: 24,
     height: 24,
-    marginHorizontal: 6,
+    marginRight: 14,
     resizeMode: "contain",
   },
   modalFavorito: {
@@ -348,28 +347,26 @@ const styles = StyleSheet.create({
     height: 24,
     resizeMode: "contain",
   },
+
   modalLikes: {
     paddingHorizontal: 14,
-    paddingTop: 8,
     fontSize: 14,
     fontWeight: "600",
-    color: "#000",
   },
   modalFecha: {
-    paddingHorizontal: 14,
-    paddingTop: 4,
-    paddingBottom: 10,
+    padding: 14,
     fontSize: 10,
     color: "#8e8e8e",
-    letterSpacing: 0.5,
+    textTransform: "uppercase",
   },
+
+  // input de comentario abajo del todo
   modalAddComment: {
     flexDirection: "row",
     alignItems: "center",
+    padding: 14,
     borderTopWidth: 1,
     borderTopColor: "#efefef",
-    paddingHorizontal: 14,
-    paddingVertical: 12,
   },
   modalAddCommentPlaceholder: {
     flex: 1,

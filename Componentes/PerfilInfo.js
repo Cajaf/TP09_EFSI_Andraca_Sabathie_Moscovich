@@ -48,7 +48,6 @@ const PerfilInfo = ({ nombre, posts, followers, following, desc, foto }) => {
 const styles = StyleSheet.create({
   perfilInfo: {
     flexDirection: "row",
-    alignItems: "flex-start",
     gap: 30,
     maxWidth: 935,
     width: "100%",
@@ -60,6 +59,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  perfilStats: {
+    flex: 1,
+  },
   topRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -68,7 +70,6 @@ const styles = StyleSheet.create({
   },
   nombre: {
     fontSize: 20,
-    fontWeight: "400",
     color: "#000",
   },
   button: {
@@ -92,31 +93,28 @@ const styles = StyleSheet.create({
     height: 20,
     resizeMode: "contain",
   },
-  perfilStats: {
-    flex: 1,
-  },
   stats: {
     flexDirection: "row",
-    marginBottom: 20,
     gap: 40,
+    marginBottom: 20,
   },
   statItem: {
     flexDirection: "row",
-    alignItems: "baseline",
+    gap: 4,
   },
   statNumber: {
     fontWeight: "600",
-    fontSize: 16,
+    fontSize: 15,
     color: "#000",
   },
   statLabel: {
-    fontSize: 16,
+    fontSize: 15,
     color: "#000",
   },
   username: {
     fontWeight: "600",
     fontSize: 14,
-    marginBottom: 2,
+    marginBottom: 4,
   },
   perfilDesc: {
     fontSize: 14,
