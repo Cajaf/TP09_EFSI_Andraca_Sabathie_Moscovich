@@ -157,7 +157,7 @@ const Perfil = () => {
 
                   <Image source={{ uri: selectedCat.foto }} style={styles.modalImage} />
 
-                  <View style={styles.modalInfo}>
+                <View style={styles.modalInfo}>
                     {/* Header */}
                     <View style={styles.modalHeader}>
                       <FotoPerfil
@@ -171,6 +171,17 @@ const Perfil = () => {
                       <Image source={puntitos} style={styles.modalPuntitos} />
                     </View>
 
+                    {/* Botones */}
+                    <View style={styles.modalBotones}>
+                      <Image source={likeIcon} style={styles.modalIcono} />
+                      <Image source={mensajes} style={styles.modalIcono} />
+                      <Image source={enviar} style={styles.modalIcono} />
+                      <Image source={favorito} style={styles.modalFavorito} />
+                    </View>
+
+                    <Text style={styles.modalLikes}>{selectedCat.likes} likes</Text>
+                    <Text style={styles.modalFecha}>3 DAYS AGO</Text>
+
                     {/* Comentarios */}
                     <ScrollView style={styles.modalCommentsList}>
                       <Comentario
@@ -182,17 +193,6 @@ const Perfil = () => {
                         <Comentario key={i} nombre={c.nombre} comentario={c.comentario} foto={c.foto} />
                       ))}
                     </ScrollView>
-
-                    {/* Botones */}
-                    <View style={styles.modalBotones}>
-                      <Image source={likeIcon} style={styles.modalIcono} />
-                      <Image source={mensajes} style={styles.modalIcono} />
-                      <Image source={enviar} style={styles.modalIcono} />
-                      <Image source={favorito} style={styles.modalFavorito} />
-                    </View>
-
-                    <Text style={styles.modalLikes}>{selectedCat.likes} likes</Text>
-                    <Text style={styles.modalFecha}>3 DAYS AGO</Text>
 
                     <View style={styles.modalAddComment}>
                       <Text style={styles.modalAddCommentPlaceholder}>Add a comment...</Text>
@@ -266,7 +266,7 @@ const styles = StyleSheet.create({
 
   // caja blanca del modal: foto a la izquierda, info a la derecha
   modalContent: {
-    flexDirection: "row",
+    flexDirection: "column",
     backgroundColor: "#fff",
     borderRadius: 4,
     width: "80%",
@@ -285,13 +285,13 @@ const styles = StyleSheet.create({
     fontSize: 24,
   },
   modalImage: {
-    width: "65%",
-    height: "100%",
+    width: "100%",
+    height: "45%",
     resizeMode: "cover",
     backgroundColor: "#000",
   },
   modalInfo: {
-    width: "35%",
+    flex: 1,
     borderLeftWidth: 1,
     borderLeftColor: "#dbdbdb",
   },
