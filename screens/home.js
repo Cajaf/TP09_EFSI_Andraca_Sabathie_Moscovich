@@ -57,7 +57,13 @@ export default function Home() {
         { perfil: perfiles[0], foto: cats[0].url, likes: 12, comentarios: [comentarios[2], comentarios[4]] },
         { perfil: perfiles[1], foto: cats[1].url, likes: 8, comentarios: [comentarios[1]] },
         { perfil: perfiles[2], foto: cats[2].url, likes: 15, comentarios: [comentarios[5], comentarios[0]] },
-        { perfil: perfiles[3], foto: cats[3].url, likes: 20, comentarios: [comentarios[6]] },
+        { perfil: perfiles[3], foto: cats[3].url, likes: 20, comentarios: [comentarios[5]] },
+        { perfil: perfiles[4], foto: cats[4].url, likes: 25, comentarios: [comentarios[2]] },
+        { perfil: perfiles[5], foto: cats[5].url, likes: 16, comentarios: [comentarios[8]] },
+        { perfil: perfiles[6], foto: cats[6].url, likes: 19, comentarios: [comentarios[2]] },
+        { perfil: perfiles[7], foto: cats[7].url, likes: 20, comentarios: [comentarios[5]] },
+        { perfil: perfiles[8], foto: cats[8].url, likes: 20, comentarios: [comentarios[3]] },
+        { perfil: perfiles[9], foto: cats[9].url, likes: 20, comentarios: [comentarios[8]] },
       ]);
     }
   }, [cats]);
