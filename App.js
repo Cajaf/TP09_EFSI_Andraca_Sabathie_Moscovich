@@ -9,7 +9,7 @@ import Perfil from './screens/perfil';
 const Tab = createBottomTabNavigator();
 
 function TabIcon({ routeName, color }) {
-  const iconSource = routeName === 'Home' ? require('./assets/home.png') : require('./assets/perfilDefault.png');
+  const iconSource = routeName === 'Home' ? require('./assets/home.png') : require('./assets/perfilicon.png');
 
   return (
     <Image
