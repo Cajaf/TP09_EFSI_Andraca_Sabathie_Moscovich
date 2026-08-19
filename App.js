@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
     paddingTop: 8,
   },
   tabIcon: {
-    width: 24,
-    height: 24,
+    width: 32,
+    height: 32,
   },
 });
